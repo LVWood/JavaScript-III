@@ -78,13 +78,13 @@ Hero.prototype = Object.create(Humanoid.prototype);
 Hero.prototype.credo = function() {
   return `${this.name} was born to great purpose: to ${this.quest}.`
 };
-Hero.prototype.battle = function() {
-  if (this.healthPoints < 5 && this.healthPoints > 0) {
-    return `${this.name} is feeling weak. Lose a turn.`;
-  } else if (this.healthPoints < 0) {
-    return this.destroy(this.Hero);
+Hero.prototype.battle = function(opponent) {
+  if (opponent.healthPoints < 6 && opponent.healthPoints > 0) {
+    return opponent.takeDamage();
+  } else if (opponent.healthPoints < 0) {
+    return opponent.destroy();
   } else {
-    return `${this.name} retains their ${this.superPower} and will not be vanquished!`
+    return `${opponent.name} will not be vanquished!`;
   }
 };
 
@@ -102,13 +102,13 @@ Villain.prototype = Object.create(Humanoid.prototype);
 Villain.prototype.backstory = function() {
   return `${this.name}'s heart was turned to stone by ${this.motivator}.`
 }
-Villain.prototype.vanquished = function() {
-  if (this.healthPoints < 5 || this.healthPoints > 1) {
-    return `${this.name} was forced to retreat in order to nurse ${this.weakness}.`
-  } else if (this.healthpoints > 5) {
-    return this.takeDamage(this.villain);
+Villain.prototype.vanquished = function(opponent) {
+  if (this.healthPoints < opponent.healthPoints) {
+    return this.takeDamage();
+  } else if (this.healthpoints > opponent.healthPoints) {
+    return opponent.takeDamage();
   } else {
-    return this.destroy(this.villain);
+    return `The battle between ${this.name} and the noble ${opponent.name} is a draw.`;
   }
 };
 /*
@@ -228,6 +228,9 @@ Villain.prototype.vanquished = function() {
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
   console.log('STRETCH LOGS BEGIN HERE');
   console.log(ladyAnthrax.superPower);
-  console.log(oldKnight.vanquished());
+  console.log(oldKnight.vanquished(swordsman));
   console.log(ladyAnthrax.credo());
   console.log(oldKnight.backstory())
+  console.log(ladyAnthrax.battle(mage));
+  console.log(oldKnight.vanquished(archer));
+  console.log(ladyAnthrax.battle(oldKnight));
