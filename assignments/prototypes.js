@@ -60,6 +60,14 @@ Humanoid.prototype = Object.create(CharacterStats.prototype);
 Humanoid.prototype.greet = function() {
   return `${this.name} offers a greeting in ${this.language}.`
 };
+// added prototype for stretch
+Humanoid.prototype.attack = function(attacker, defender) {
+  if (attacker.healthPoints <= 10) {
+    return attacker.destroy();
+} else if (attacker.healthPoints >= 10) {
+    return defender.takeDamage();
+  }
+};
 
 
 ///////////// STRETCH ////////////////////////
@@ -87,6 +95,7 @@ Hero.prototype.battle = function(opponent) {
     return `${opponent.name} will not be vanquished!`;
   }
 };
+
 
 // Villain
 function Villain(villainAttributes) {
@@ -234,3 +243,5 @@ Villain.prototype.vanquished = function(opponent) {
   console.log(ladyAnthrax.battle(mage));
   console.log(oldKnight.vanquished(archer));
   console.log(ladyAnthrax.battle(oldKnight));
+  console.log(archer.attack(archer, mage));
+  console.log(oldKnight.attack(oldKnight, ladyAnthrax));
