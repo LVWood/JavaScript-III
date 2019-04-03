@@ -46,4 +46,4 @@ function isTall(species, height) {
     Tree.call(this, species, height);
     return `This ${species} tree is ${height} feet tall.`
 };
-console.log(isTall(oak.species, oak.height));
+//console.log(isTall(oak.species, oak.height));
