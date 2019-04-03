@@ -61,6 +61,56 @@ Humanoid.prototype.greet = function() {
   return `${this.name} offers a greeting in ${this.language}.`
 };
 
+
+///////////// STRETCH ////////////////////////
+// Hero
+function Hero(heroAttributes) {
+  CharacterStats.call(this, heroAttributes);
+  GameObject.call(this, heroAttributes);
+  Humanoid.call(this, heroAttributes);
+  this.superPower = heroAttributes.superPower;
+  this.quest = heroAttributes.quest;
+}
+
+Hero.prototype = Object.create(GameObject.prototype);
+Hero.prototype = Object.create(CharacterStats.prototype);
+Hero.prototype = Object.create(Humanoid.prototype);
+Hero.prototype.credo = function() {
+  return `${this.name} was born to great purpose: to ${this.quest}.`
+};
+Hero.prototype.battle = function() {
+  if (this.healthPoints < 5 && this.healthPoints > 0) {
+    return `${this.name} is feeling weak. Lose a turn.`;
+  } else if (this.healthPoints < 0) {
+    return this.destroy(this.Hero);
+  } else {
+    return `${this.name} retains their ${this.superPower} and will not be vanquished!`
+  }
+};
+
+// Villain
+function Villain(villainAttributes) {
+  GameObject.call(this, villainAttributes);
+  CharacterStats.call(this, villainAttributes);
+  Humanoid.call(this, villainAttributes);
+  this.motivator = villainAttributes.motivator;
+  this.weakness = villainAttributes.weakness;
+}
+Villain.prototype = Object.create(GameObject.prototype);
+Villain.prototype = Object.create(CharacterStats.prototype);
+Villain.prototype = Object.create(Humanoid.prototype);
+Villain.prototype.backstory = function() {
+  return `${this.name}'s heart was turned to stone by ${this.motivator}.`
+}
+Villain.prototype.vanquished = function() {
+  if (this.healthPoints < 5 || this.healthPoints > 1) {
+    return `${this.name} was forced to retreat in order to nurse ${this.weakness}.`
+  } else if (this.healthpoints > 5) {
+    return this.takeDamage(this.villain);
+  } else {
+    return this.destroy(this.villain);
+  }
+};
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -119,6 +169,46 @@ Humanoid.prototype.greet = function() {
     ],
     language: 'Elvish',
   });
+//////////////////////// STRETCH ////////////
+// new hero & villain objects
+
+  const ladyAnthrax = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 2,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Zoot',
+    team: 'The Round Table',
+    weapons: [
+      'Charm',
+      'Whip',
+    ],
+    language: 'Common Tongue',
+    superPower: 'looking on the bright side',
+    quest: 'explore the world'
+  });
+
+  const oldKnight = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 2,
+      width: 2,
+      height: 3,
+    },
+    healthPoints: 9,
+    name: 'Garin of Beaucaire',
+    team: 'Old farts',
+    weapons: [
+      'Bad Temper',
+      'Money',
+    ],
+    language: 'Common Tongue',
+    motivator: 'money and power',
+    weakness: 'his gout'
+  });
 
   console.log(mage.createdAt); // Today's date
   console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
@@ -136,3 +226,8 @@ Humanoid.prototype.greet = function() {
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+  console.log('STRETCH LOGS BEGIN HERE');
+  console.log(ladyAnthrax.superPower);
+  console.log(oldKnight.vanquished());
+  console.log(ladyAnthrax.credo());
+  console.log(oldKnight.backstory())
