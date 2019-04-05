@@ -15,14 +15,29 @@
   * dimensions (These represent the character's size in the video game)
   * destroy() // prototype method that returns: `${this.name} was removed from the game.`
 */
-
+function GameObject (attributes) {
+  this.createdAt = attributes.createdAt;
+  this.name = attributes.name;
+  this.dimensions = attributes.dimensions
+}
+GameObject.prototype.destroy = function() {
+  return `${this.name} was removed from the game.`
+};
 /*
   === CharacterStats ===
   * healthPoints
   * takeDamage() // prototype method -> returns the string '<object name> took damage.'
   * should inherit destroy() from GameObject's prototype
 */
+function CharacterStats(statAttributes) {
+  GameObject.call(this, statAttributes);
+  this.healthPoints = statAttributes.healthPoints;
+}
+CharacterStats.prototype = Object.create(GameObject.prototype);
 
+CharacterStats.prototype.takeDamage = function() {
+  return `${this.name} took damage.`
+};
 /*
   === Humanoid (Having an appearance or character resembling that of a human.) ===
   * team
@@ -32,7 +47,79 @@
   * should inherit destroy() from GameObject through CharacterStats
   * should inherit takeDamage() from CharacterStats
 */
- 
+function Humanoid(humanoidAttributes) {
+  CharacterStats.call(this, humanoidAttributes);
+  GameObject.call(this, humanoidAttributes);
+  this.team = humanoidAttributes.team;
+  this.weapons = humanoidAttributes.weapons;
+  this.language = humanoidAttributes.language;
+} 
+Humanoid.prototype = Object.create(GameObject.prototype);
+Humanoid.prototype = Object.create(CharacterStats.prototype);
+
+Humanoid.prototype.greet = function() {
+  return `${this.name} offers a greeting in ${this.language}.`
+};
+// added prototype for stretch
+Humanoid.prototype.attack = function(attacker, defender) {
+  if (attacker.healthPoints <= 10) {
+    return attacker.destroy();
+} else if (attacker.healthPoints >= 10) {
+    return defender.takeDamage();
+  }
+};
+
+
+///////////// STRETCH ////////////////////////
+// Hero
+function Hero(heroAttributes) {
+  CharacterStats.call(this, heroAttributes);
+  GameObject.call(this, heroAttributes);
+  Humanoid.call(this, heroAttributes);
+  this.superPower = heroAttributes.superPower;
+  this.quest = heroAttributes.quest;
+}
+
+Hero.prototype = Object.create(GameObject.prototype);
+Hero.prototype = Object.create(CharacterStats.prototype);
+Hero.prototype = Object.create(Humanoid.prototype);
+Hero.prototype.credo = function() {
+  return `${this.name} was born to great purpose: to ${this.quest}.`
+};
+Hero.prototype.battle = function(opponent) {
+  if (opponent.healthPoints < 6 && opponent.healthPoints > 0) {
+    return opponent.takeDamage();
+  } else if (opponent.healthPoints < 0) {
+    return opponent.destroy();
+  } else {
+    return `${opponent.name} will not be vanquished!`;
+  }
+};
+
+
+// Villain
+function Villain(villainAttributes) {
+  GameObject.call(this, villainAttributes);
+  CharacterStats.call(this, villainAttributes);
+  Humanoid.call(this, villainAttributes);
+  this.motivator = villainAttributes.motivator;
+  this.weakness = villainAttributes.weakness;
+}
+Villain.prototype = Object.create(GameObject.prototype);
+Villain.prototype = Object.create(CharacterStats.prototype);
+Villain.prototype = Object.create(Humanoid.prototype);
+Villain.prototype.backstory = function() {
+  return `${this.name}'s heart was turned to stone by ${this.motivator}.`
+}
+Villain.prototype.vanquished = function(opponent) {
+  if (this.healthPoints < opponent.healthPoints) {
+    return this.takeDamage();
+  } else if (this.healthpoints > opponent.healthPoints) {
+    return opponent.takeDamage();
+  } else {
+    return `The battle between ${this.name} and the noble ${opponent.name} is a draw.`;
+  }
+};
 /*
   * Inheritance chain: GameObject -> CharacterStats -> Humanoid
   * Instances of Humanoid should have all of the same properties as CharacterStats and GameObject.
@@ -41,7 +128,7 @@
 
 // Test you work by un-commenting these 3 objects and the list of console logs below:
 
-/*
+
   const mage = new Humanoid({
     createdAt: new Date(),
     dimensions: {
@@ -91,6 +178,46 @@
     ],
     language: 'Elvish',
   });
+//////////////////////// STRETCH ////////////
+// new hero & villain objects
+
+  const ladyAnthrax = new Hero({
+    createdAt: new Date(),
+    dimensions: {
+      length: 1,
+      width: 2,
+      height: 4,
+    },
+    healthPoints: 10,
+    name: 'Zoot',
+    team: 'The Round Table',
+    weapons: [
+      'Charm',
+      'Whip',
+    ],
+    language: 'Common Tongue',
+    superPower: 'looking on the bright side',
+    quest: 'explore the world'
+  });
+
+  const oldKnight = new Villain({
+    createdAt: new Date(),
+    dimensions: {
+      length: 2,
+      width: 2,
+      height: 3,
+    },
+    healthPoints: 9,
+    name: 'Garin of Beaucaire',
+    team: 'Old farts',
+    weapons: [
+      'Bad Temper',
+      'Money',
+    ],
+    language: 'Common Tongue',
+    motivator: 'money and power',
+    weakness: 'his gout'
+  });
 
   console.log(mage.createdAt); // Today's date
   console.log(archer.dimensions); // { length: 1, width: 2, height: 4 }
@@ -102,9 +229,19 @@
   console.log(archer.greet()); // Lilith offers a greeting in Elvish.
   console.log(mage.takeDamage()); // Bruce took damage.
   console.log(swordsman.destroy()); // Sir Mustachio was removed from the game.
-*/
+
 
   // Stretch task: 
   // * Create Villain and Hero constructor functions that inherit from the Humanoid constructor function.  
   // * Give the Hero and Villains different methods that could be used to remove health points from objects which could result in destruction if health gets to 0 or drops below 0;
   // * Create two new objects, one a villain and one a hero and fight it out with methods!
+  console.log('STRETCH LOGS BEGIN HERE');
+  console.log(ladyAnthrax.superPower);
+  console.log(oldKnight.vanquished(swordsman));
+  console.log(ladyAnthrax.credo());
+  console.log(oldKnight.backstory())
+  console.log(ladyAnthrax.battle(mage));
+  console.log(oldKnight.vanquished(archer));
+  console.log(ladyAnthrax.battle(oldKnight));
+  console.log(archer.attack(archer, mage));
+  console.log(oldKnight.attack(oldKnight, ladyAnthrax));
